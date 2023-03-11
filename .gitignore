@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store/
+note/
+backup/
+.DS_Store
+push.sh
+connect.sh
