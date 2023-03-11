@@ -1,24 +1,28 @@
 const { Schema, model } = require('mongoose');
 
-// Schema to create Reaction model
-const reactionSchema = new Schema(
-  {
-    reactionId: {
-      type: mongoose.Schema.Types.ObjectId,
-      default: new mongoose.Types.ObjectId()
-    },
+// Schema to create Reaction modeconst reactionSchema = new Schema({
+  reactionId: {
+    type: Schema.Types.ObjectId,
+    default: () => new Types.ObjectId(),
   },
-  {
-    // Mongoose supports two Schema options to transform Objects after querying MongoDb: toJSON and toObject.
-    // Here we are indicating that we want virtuals to be included with our response, overriding the default behavior
-    toJSON: {
-      virtuals: true,
-    },
-    id: false,
+  reactionBody: {
+    type: String,
+    required: true,
+    maxlength: 280,
+  },
+  username: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    get: timestamp => dateFormat(timestamp)
   }
-);
+});
 
-// Initialize our User model
-const User = model('user', userSchema);
+function dateFormat(timestamp) {
+  return new Date(timestamp).toISOString();
+}
 
-module.exports = User;
+module.exports = reactionSchema;
