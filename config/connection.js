@@ -1,8 +1,10 @@
-const { connect, connection } = require('mongoose');
+//const { connect, connection } = require('mongoose');
+const mongoose = require('mongoose');
 
-connect('mongodb://localhost/socialNetworkAPI', {
+mongoose.set("strictQuery", false);
+mongoose.connect('mongodb://localhost/socialNetworkAPI', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-module.exports = connection;
+module.exports = mongoose.connection;
