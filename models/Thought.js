@@ -22,7 +22,7 @@ const thoughtSchema = new Schema(
     },
     
     //reactions: [reactionSchema],
-    //reactions: [Reaction],
+    reactions: [Reaction],
   }
 );
 
