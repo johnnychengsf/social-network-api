@@ -49,30 +49,26 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
   addFriend(req, res) {
-    // app.post('/api/users/:userId/friends', (req, res) => {
     const { userId, friendId } = req.params;
     // fetch the user from the database using the userId
+    console.log("userId: " + userId + ", friendId: " + friendId);
     User.findById(userId, (err, user) => {
       if (err) {
         return res.status(500).send({ error: 'Failed to find user' });
       }
-
       // add the friendId to the user's friend list
       user.friends.push(friendId);
-
       // save the updated user to the database
       user.save((err) => {
         if (err) {
           return res.status(500).send({ error: 'Failed to save user' });
         }
-
         // return the updated user object
         res.send(user);
       });
     });
   },
   deleteFriend (req, res) {
-    // app.delete('/api/users/:userId/friends/:friendId', (req, res) => {
     const { userId, friendId } = req.params;
   
     // fetch the user from the database using the userId
