@@ -40,15 +40,21 @@ module.exports = {
   },
   deleteUser(req, res) {
     User.findOneAndDelete({ _id: req.params.userId })
-      .then((user) =>
+      .then((user) => {
+        if (!user) {
+          res.status(404).json({ message: 'No user with that ID' })
+        }
+      /*
         !user
           ? res.status(404).json({ message: 'No user with that ID' })
           : Application.deleteMany({ _id: { $in: user.applications } })
+          */
+        }
       )
       .then(() => res.json({ message: 'User and associated apps deleted!' }))
       .catch((err) => res.status(500).json(err));
   },
-  addFriend(req, res) {
+  createFriend(req, res) {
     const { userId, friendId } = req.params;
     // fetch the user from the database using the userId
     console.log("userId: " + userId + ", friendId: " + friendId);

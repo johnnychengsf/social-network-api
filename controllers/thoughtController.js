@@ -19,12 +19,14 @@ module.exports = {
   },
   // create a new thought
   createThought(req, res) {
-   Thought.create(req.body)
-     .then((dbThoughtData) => res.json(dbThoughtData))
-     .catch((err) => res.status(500).json(err));
+    /*
     Thought.create(req.body)
-      .then((Thought) => {
-        console.log("thoughtId: " + Thought._id);
+      .then((dbThoughtData) => res.json(dbThoughtData))
+      .catch((err) => res.status(500).json(err));
+     */
+    Thought.create(req.body)
+      .then((dbThoughtData) => {
+        console.log("thoughtId: " + dbThoughtData._id);
         console.log("userId: " + req.body.userId);
 
         User.findById(req.body.userId, (err, user) => {
@@ -32,7 +34,7 @@ module.exports = {
             return res.status(500).send({ error: 'Failed to find user' });
           }
           // add the Thought to the user's Thought list
-          user.thoughts.push(Thought._id);
+          user.thoughts.push(dbThoughtData._id);
           // save the updated user to the database
           console.log(user.thoughts);
           
@@ -42,30 +44,41 @@ module.exports = {
             }
           });
         });
+        res.json(dbThoughtData);
       }
     )
     .catch((err) => res.status(500).json(err));
-/*
-
-    Application.findOneAndRemove({ _id: req.params.applicationId })
-      .then((application) =>
-        !application
-          ? res.status(404).json({ message: 'No application with this id!' })
-          : User.findOneAndUpdate(
-              { applications: req.params.applicationId },
-              { $pull: { applications: req.params.applicationId } },
-              { new: true }
-            )
-      )
-      .then((user) =>
-        !user
-          ? res.status(404).json({
-              message: 'Application created but no user with this id!',
-            })
-          : res.json({ message: 'Application successfully deleted!' })
-      )
-      .catch((err) => res.status(500).json(err));
-*/
-
+  },
+  createReaction(req, res) {
+    Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $push: { reactions: req.body } },
+      { new: true }
+    )
+      .then(updatedThought => {
+        console.log(updatedThought);
+        res.json(updatedThought);
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+      });
+  },
+  deleteReaction(req, res) {
+    const { thoughtId, reactionId } = req.params;
+    
+    Thought.findOneAndUpdate(
+      { _id: thoughtId },
+      { $pull: { reactions: { _id: reactionId } }},
+      { new: true }
+    )
+      .then(updatedThought => {
+        console.log(updatedThought);
+        res.json(updatedThought);
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   }
 }
