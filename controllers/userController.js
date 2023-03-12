@@ -23,10 +23,30 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
   updateUser(req, res) {
-    User.updateOne({"item": "banana"}, {$set: { "item" : "apple"}});
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $set: req.body },
+      { runValidators: true, new: true }
+    )
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: 'No user with this id!' })
+          : res.json(user)
+      )
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
   deleteUser(req, res) {
-    User.remove();
+    User.findOneAndDelete({ _id: req.params.userId })
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: 'No user with that ID' })
+          : Application.deleteMany({ _id: { $in: user.applications } })
+      )
+      .then(() => res.json({ message: 'User and associated apps deleted!' }))
+      .catch((err) => res.status(500).json(err));
   },
   addFriend(req, res) {
     // app.post('/api/users/:userId/friends', (req, res) => {
