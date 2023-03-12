@@ -8,6 +8,7 @@ module.exports = {
      .catch((err) => res.status(500).json(err));
   },
   getSingleThought(req, res) {
+    console.log("findOne thoughtId: " + req.params.thoughtId);
     Thought.findOne({ _id: req.params.thoughtId })
      .select('-__v')
      .then((thought) =>
@@ -19,11 +20,6 @@ module.exports = {
   },
   // create a new thought
   createThought(req, res) {
-    /*
-    Thought.create(req.body)
-      .then((dbThoughtData) => res.json(dbThoughtData))
-      .catch((err) => res.status(500).json(err));
-     */
     Thought.create(req.body)
       .then((dbThoughtData) => {
         console.log("thoughtId: " + dbThoughtData._id);
@@ -48,6 +44,22 @@ module.exports = {
       }
     )
     .catch((err) => res.status(500).json(err));
+  },
+  updateThought(req, res) {
+    Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $set: req.body },
+      { runValidators: true, new: true }
+    )
+      .then((thought) =>
+        !thought
+          ? res.status(404).json({ message: 'No thought with this id!' })
+          : res.json(thought)
+      )
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
   createReaction(req, res) {
     Thought.findOneAndUpdate(
