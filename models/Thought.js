@@ -21,7 +21,7 @@ const thoughtSchema = new Schema(
       trim: true,
     },
     //reactions: [reactionSchema],
-    reactions: [Reaction],
+    //reactions: [Reaction],
   }
 );
 
