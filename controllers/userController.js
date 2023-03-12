@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Thought = require('../models/Thought');
 
 module.exports = {
   getUsers(req, res) {
@@ -44,13 +45,19 @@ module.exports = {
         if (!user) {
           res.status(404).json({ message: 'No user with that ID' })
         }
-      /*
-        !user
-          ? res.status(404).json({ message: 'No user with that ID' })
-          : Application.deleteMany({ _id: { $in: user.applications } })
-          */
+        for(let i = 0; i < user.thoughts.length; i++) {
+          console.log(user.thoughts[i]);
+          Thought.findOneAndDelete({ _id: user.thoughts[i] })
+
+          .then((thought) => {
+            if (!thought) {
+              console.log('No thought with that ID');
+            }
+          })
+          .then(() => console.log('Thought deleted!'))
+          .catch((err) => console.log(err));
         }
-      )
+      })
       .then(() => res.json({ message: 'User and associated apps deleted!' }))
       .catch((err) => res.status(500).json(err));
   },
