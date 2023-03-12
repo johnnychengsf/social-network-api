@@ -22,4 +22,65 @@ module.exports = {
       .then((dbUserData) => res.json(dbUserData))
       .catch((err) => res.status(500).json(err));
   },
+  updateUser(req, res) {
+    User.updateOne({"item": "banana"}, {$set: { "item" : "apple"}});
+  },
+  deleteUser(req, res) {
+    User.remove();
+  },
+  addFriend(req, res) {
+    // app.post('/api/users/:userId/friends', (req, res) => {
+    const { userId, friendId } = req.params;
+    // fetch the user from the database using the userId
+    User.findById(userId, (err, user) => {
+      if (err) {
+        return res.status(500).send({ error: 'Failed to find user' });
+      }
+
+      // add the friendId to the user's friend list
+      user.friends.push(friendId);
+
+      // save the updated user to the database
+      user.save((err) => {
+        if (err) {
+          return res.status(500).send({ error: 'Failed to save user' });
+        }
+
+        // return the updated user object
+        res.send(user);
+      });
+    });
+  },
+  deleteFriend (req, res) {
+    // app.delete('/api/users/:userId/friends/:friendId', (req, res) => {
+    const { userId, friendId } = req.params;
+  
+    // fetch the user from the database using the userId
+    User.findById(userId, (err, user) => {
+      if (err) {
+        return res.status(500).send({ error: 'Failed to find user' });
+      }
+  
+      // find the index of the friendId in the user's friend list
+      const index = user.friends.indexOf(friendId);
+  
+      // if the friendId is not in the user's friend list, return an error
+      if (index === -1) {
+        return res.status(400).send({ error: 'Friend not found in user\'s friend list' });
+      }
+  
+      // remove the friendId from the user's friend list
+      user.friends.splice(index, 1);
+  
+      // save the updated user to the database
+      user.save((err) => {
+        if (err) {
+          return res.status(500).send({ error: 'Failed to save user' });
+        }
+  
+        // return the updated user object
+        res.send(user);
+      });
+    });
+  });
 };
